@@ -1,0 +1,32 @@
+model_list:
+  # 1. Gemini (Google)
+  - model_name: gemini-pro
+    litellm_params:
+      model: gemini/gemini-1.5-pro-latest
+      api_key: os.environ/GEMINI_API_KEY
+      max_tokens: 4000 # Limit tokens here
+      
+  # 2. OpenAI
+  - model_name: gpt-4o
+    litellm_params:
+      model: gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+      max_tokens: 4000
+
+  # 3. Claude (Anthropic)
+  - model_name: claude-3-sonnet
+    litellm_params:
+      model: anthropic/claude-3-5-sonnet-20240620
+      api_key: os.environ/ANTHROPIC_API_KEY
+      max_tokens: 4000
+
+  # 4. Local Qwen 3.5 via Ollama
+  - model_name: local-qwen
+    litellm_params:
+      model: ollama/qwen2.5 # Or qwen:latest depending on your ollama pull
+      api_base: http://host.docker.internal:11434 # Pointing to local ollama instance
+
+# Default router settings
+router_settings:
+  routing_strategy: usage-based-routing
+  fallbacks: [{"gemini-pro": ["gpt-4o", "claude-3-sonnet", "local-qwen"]}]

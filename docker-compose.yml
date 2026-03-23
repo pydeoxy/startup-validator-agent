@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./backend
+    container_name: validator_backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    # This allows LiteLLM inside Docker to reach Ollama running on your host machine
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  bot:
+    build: 
+      context: ./backend # Reuses the backend image
+    container_name: validator_bot
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: python -m bot.telegram_bot
+    # Depends on backend just to ensure they start in order
+    depends_on:
+      - backend
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: validator_frontend
+    ports:
+      - "8080:8080" # Standard Lovable/Vite port. Change if Lovable exports differently.
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    command: npm run dev -- --host 0.0.0.0 --port 8080
