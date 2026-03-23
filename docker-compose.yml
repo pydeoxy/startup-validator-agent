@@ -9,7 +9,7 @@ services:
       - "8000:8000"
     env_file:
       - .env
-    # This allows LiteLLM inside Docker to reach Ollama running on your host machine
+    # This allows the backend to reach Ollama running on your host machine
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
@@ -30,12 +30,8 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        - VITE_API_URL=http://localhost:8000
     container_name: validator_frontend
     ports:
-      - "8080:8080" # Standard Lovable/Vite port. Change if Lovable exports differently.
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - VITE_API_URL=http://localhost:8000
-    command: npm run dev -- --host 0.0.0.0 --port 8080
+      - "8080:80"

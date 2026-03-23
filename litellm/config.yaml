@@ -23,10 +23,10 @@ model_list:
   # 4. Local Qwen 3.5 via Ollama
   - model_name: local-qwen
     litellm_params:
-      model: ollama/qwen2.5 # Or qwen:latest depending on your ollama pull
+      model: ollama/qwen3.5 # Or qwen:latest depending on your ollama pull
       api_base: http://host.docker.internal:11434 # Pointing to local ollama instance
 
 # Default router settings
 router_settings:
   routing_strategy: usage-based-routing
-  fallbacks: [{"gemini-pro": ["gpt-4o", "claude-3-sonnet", "local-qwen"]}]
+  fallbacks: [{"local-qwen": ["gemini-pro", "gpt-4o", "claude-3-sonnet"]}]

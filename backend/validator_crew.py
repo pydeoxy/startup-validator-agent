@@ -1,14 +1,20 @@
-from crewai import Agent, Task, Crew, Process
-from langchain_openai import ChatOpenAI
+from crewai import Agent, Task, Crew, Process, LLM
 import os
 
-# Because of LiteLLM, we interact with it as if it's OpenAI
-# We can change the model name to route to Gemini, Claude, or Qwen
-llm = ChatOpenAI(
-    model="gemini-pro", # This routes through LiteLLM config
-    base_url=os.getenv("OPENAI_API_BASE", "http://localhost:4000"),
-    api_key="sk-dummy"
-)
+# Default: local Ollama (qwen3.5). Set USE_GEMINI=true in .env to switch to Gemini.
+_gemini_key = os.getenv("GEMINI_API_KEY", "")
+_use_gemini = os.getenv("USE_GEMINI", "false").lower() == "true"
+
+if _use_gemini and _gemini_key and _gemini_key != "your_gemini_api_key":
+    llm = LLM(
+        model="gemini/gemini-1.5-flash",
+        api_key=_gemini_key
+    )
+else:
+    llm = LLM(
+        model=f"ollama/{os.getenv('OLLAMA_MODEL', 'qwen3.5')}",
+        base_url=os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+    )
 
 def run_validation_crew(idea: str, target_customer: str) -> str:
     # --- AGENTS ---

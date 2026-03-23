@@ -18,7 +18,7 @@ def main():
     time.sleep(10)
 
     # 2. Open the Web UI automatically
-    web_url = "http://localhost:3000"
+    web_url = "http://localhost:8080"
     print(f"🌐 Opening Web UI at {web_url}")
     webbrowser.open(web_url)
     

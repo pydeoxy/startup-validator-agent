@@ -8,7 +8,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # We mount the code via volumes or copy it. Copying for production readiness.
-COPY . /app/backend
+COPY . /app
 #COPY ../bot /app/bot
 
 # Ensure python can find the modules

@@ -4,3 +4,5 @@ litellm
 python-dotenv
 python-telegram-bot
 pydantic
+crewai
+langchain-openai
