@@ -1,4 +1,5 @@
 from crewai import Agent, Task, Crew, Process, LLM
+from langchain_openai import ChatOpenAI
 import os
 
 # Default: local Ollama (qwen3.5). Set USE_GEMINI=true in .env to switch to Gemini.
@@ -97,5 +98,26 @@ def run_validation_crew(idea: str, target_customer: str) -> str:
         verbose=True
     )
 
-    result = crew.kickoff()
-    return result
+    # Run the crew
+    crew.kickoff()
+
+    # --- STITCHING THE FULL REPORT TOGETHER ---
+    # We access the `.output` attribute of each task to build the final string
+    full_report = f"# 🚀 Validation Report for: {idea}\n\n"
+    
+    full_report += "## 📊 Market Analysis\n"
+    full_report += f"{task_market.output}\n\n---\n\n"
+    
+    full_report += "## ⚔️ Competitor Scan\n"
+    full_report += f"{task_competitors.output}\n\n---\n\n"
+    
+    full_report += "## 💰 Pricing Strategy\n"
+    full_report += f"{task_pricing.output}\n\n---\n\n"
+    
+    full_report += "## ✍️ Landing Page Draft\n"
+    full_report += f"{task_landing.output}\n\n---\n\n"
+    
+    full_report += "## 🛑 Customer Objections\n"
+    full_report += f"{task_objections.output}\n"
+
+    return full_report
